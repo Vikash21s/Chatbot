@@ -80,6 +80,7 @@ body {
   flex-direction: column;
   gap: 20px;
   height: 460px;
+  margin-bottom: 82px;
   overflow-y: auto;
   padding: 25px 22px;
 }
@@ -169,12 +170,13 @@ body {
   height: 35px;
   width: 35px;
   border: none;
+  display: none;
   outline: none;
   cursor: pointer;
   font-size: 1.15rem;
   color: #FFF;
   flex-shrink: 0;
-  margin-reght: 6px;
+  margin-right: 6px;
   border-radius: 50%;
   background: #6D4FC2;
   transition: 0.2s ease;
@@ -182,4 +184,7 @@ body {
 
 .chat-form button:hover {
   background: #593bab;
+}
+.chat-form .message-input:not(:placeholder-shown)~button {
+  display: block; /* Show the button when the input is not empty */
 }
