@@ -19,6 +19,7 @@ const App = () => {
                         keyboard_arrow_down
                     </button>
                 </div>
+
                 {/* Chatbot Body */}
                 <div className="chat-body">
                     <div className="message bot-message">
@@ -29,13 +30,13 @@ const App = () => {
                     </div>
 
                     {chatHistory.map((chat, index) => (
-                        <ChatMessage key={index} chat ={chat} />
+                        <ChatMessage key={index} chat={chat} />
                     ))}
-                    
                 </div>
+
                 {/* Chatbot Footer */}
                 <div className="chat-footer">
-                    <ChatForm setChatHistory={setChatHistory}/>
+                    <ChatForm setChatHistory={setChatHistory} />
                 </div>
             </div>
         </div>
