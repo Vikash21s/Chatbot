@@ -1,23 +1,32 @@
-// import { useRef } from "react";
+import { useRef } from "react";
 
-// const ChatForm = () => {
-//     const inputRef = useRef();
+const ChatForm = ({setChatHistory}) => {
+    const inputRef = useRef();
 
-//     const handleFromSubmit = (e) => {
-//         e.preventDefault();
-//         const userMessage = inputRef.current.value.trim();
-//         if(!userMessage) return;
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        const userMessage = inputRef.current.value.trim();
+        if(!userMessage) return;
+        inputRef.current.value = "";
 
-//         console.log(userMessage);
-//     }
+        // Update chat history with user message
+        setChatHistory(history => [...history, {role: "user", text: userMessage}]);
+    };
 
-//     return (
-//         <from action="#" className="chat-form" onSubmit={handleFromSubmit}>
-//                     <input ref={inputRef} type="text" placeholder="Message..."
-//                      className="message-input" required/>
-//                      <button className="material-symbols-rounded">arrow_upward </ button>
-//                 </from>
-//     );
-// };
+    return (
+        <form action="#" className="chat-form" onSubmit={handleFormSubmit}>
+            <input
+                ref={inputRef} // Added ref
+                type="text"
+                placeholder="Message..."
+                className="message-input"
+                required
+            />
+            <button type="submit" className="material-symbols-rounded">
+                arrow_upward
+            </button>
+        </form>
+    );
+};
 
-// export default ChatForm 
+export default ChatForm;
