@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import ChatbotIcon from "./components/ChatbotIcon";
 import ChatForm from "./components/ChatForm";
 import ChatMessage from "./components/ChatMessage";
@@ -8,29 +9,38 @@ const App = () => {
     const chatBodyRef = useRef();
 
     const generateBotResponse = async (history) => {
-        history = history.map(({role, text}) => ({role, parts: [{text}]}));
-
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents: history })
-        };
-
         try {
-            const response = await fetch(import.meta.env.VITE_API_URL, requestOptions);
-            const data = await response.json();
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}`,
+                {
+                    contents: [{ role: "user", parts: [{ text: history }] }],
+                },
+                {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
 
-            if (!response.ok) throw new Error(data.error.message || "Something went wrong");
-
-            const apiResponseText = data.candidates[0].contents.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
-            setChatHistory(prev => [...prev.filter(msg => msg.text !== "Thinking..."), { role: "model", text: apiResponseText }]);
-
+            const apiResponseText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from API.";
+            setChatHistory((prev) =>
+                prev.map((msg) =>
+                    msg.text === "Thinking..."
+                        ? { role: "model", text: apiResponseText }
+                        : msg
+                )
+            );
         } catch (error) {
-            console.log(error);
+            console.error("Error fetching API response:", error);
+            setChatHistory((prev) =>
+                prev.map((msg) =>
+                    msg.text === "Thinking..."
+                        ? { role: "model", text: "Something went wrong. Try again later." }
+                        : msg
+                )
+            );
         }
     };
 
-    // Auto-scroll chat history updates
+
     useEffect(() => {
         if (chatBodyRef.current) {
             chatBodyRef.current.scrollTo({
@@ -43,7 +53,6 @@ const App = () => {
     return (
         <div className="container">
             <div className="chatbot-popup">
-                {/* Chatbot Header */}
                 <div className="chat-header">
                     <div className="header-info">
                         <ChatbotIcon />
@@ -54,7 +63,6 @@ const App = () => {
                     </button>
                 </div>
 
-                {/* Chatbot Body */}
                 <div ref={chatBodyRef} className="chat-body">
                     <div className="message bot-message">
                         <ChatbotIcon />
@@ -68,9 +76,8 @@ const App = () => {
                     ))}
                 </div>
 
-                {/* Chatbot Footer */}
                 <div className="chat-footer">
-                    <ChatForm chatHistory={chatHistory} setChatHistory={setChatHistory} generateBotResponse={generateBotResponse} />
+                    <ChatForm setChatHistory={setChatHistory} generateBotResponse={generateBotResponse} />
                 </div>
             </div>
         </div>

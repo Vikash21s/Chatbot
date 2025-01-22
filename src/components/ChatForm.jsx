@@ -2,14 +2,13 @@ import { useRef, useState } from "react";
 
 const ChatForm = ({ setChatHistory, generateBotResponse }) => {
     const inputRef = useRef();
-    const [isSubmitting, setIsSubmitting] = useState(false); // To track submission state
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleUserMessageSubmit = (e) => {
+    const handleUserMessageSubmit = async (e) => {
         e.preventDefault();
         const userMessage = inputRef.current.value.trim();
 
         if (!userMessage) {
-            // Optionally, show a message indicating the input is empty.
             console.log("Please enter a message");
             return;
         }
@@ -17,16 +16,16 @@ const ChatForm = ({ setChatHistory, generateBotResponse }) => {
         inputRef.current.value = ""; // Clear input field
         setIsSubmitting(true); // Disable input while waiting for response
 
-        setChatHistory((history) => {
-            const updatedHistory = [
-                ...history,
-                { role: "user", text: userMessage },
-                { role: "model", text: "Thinking..." },
-            ];
+        setChatHistory((history) => [
+            ...history,
+            { role: "user", text: userMessage },
+            { role: "model", text: "Thinking..." },
+        ]);
 
-            generateBotResponse(updatedHistory); // Directly call to avoid delay
-            return updatedHistory;
-        });
+        // Call the API
+        await generateBotResponse(userMessage);
+
+        setIsSubmitting(false); // Re-enable input
     };
 
     return (
@@ -37,7 +36,7 @@ const ChatForm = ({ setChatHistory, generateBotResponse }) => {
                 placeholder="Message..."
                 className="message-input"
                 required
-                disabled={isSubmitting} // Disable input while waiting for response
+                disabled={isSubmitting}
             />
             <button type="submit" className="material-symbols-rounded" disabled={isSubmitting}>
                 arrow_upward
