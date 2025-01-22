@@ -34,21 +34,24 @@ body {
 }
 
 .chatbot-popup {
-    position: fixed;
-    opacity: 0;
-    pointer-events: none;
-    bottom: 80px;
-    right: 40px;
-    width: 420px;
-    overflow: hidden;
-    background: #FFF;
-    border-radius: 15px;
-    box-shadow: 0 0 128px rgba(0, 0, 0, 0.1),
-        0 32px 64px -48px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  bottom: 80px;
+  right: 40px;
+  width: 420px;
+  overflow: hidden;
+  background: #FFF;
+  border-radius: 15px;
+  box-shadow: 0 0 128px rgba(0, 0, 0, 0.1),
+      0 32px 64px -48px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.5);
+  transition: transform 0.4s ease, opacity 0.4s ease;
 }
 
 .container.show-chatbot .chatbot-popup {
     opacity: 1;
+    transform: scale(1);
     pointer-events: auto;
 }
 
