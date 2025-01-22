@@ -5,7 +5,8 @@ import ChatForm from "./components/ChatForm";
 import ChatMessage from "./components/ChatMessage";
 
 const App = () => {
-    const [chatHistory, setChatHistory] = useState([]);
+    const [chatHistory, setChatHistory] = useState([]); // Correct state initialization
+    const [showChatbot, setShowChatbot] = useState(false); // Boolean value
     const chatBodyRef = useRef();
 
     const generateBotResponse = async (history) => {
@@ -20,7 +21,9 @@ const App = () => {
                 }
             );
 
-            const apiResponseText = response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from API.";
+            const apiResponseText =
+                response.data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+                "No response from API.";
             setChatHistory((prev) =>
                 prev.map((msg) =>
                     msg.text === "Thinking..."
@@ -33,13 +36,15 @@ const App = () => {
             setChatHistory((prev) =>
                 prev.map((msg) =>
                     msg.text === "Thinking..."
-                        ? { role: "model", text: "Something went wrong. Try again later." }
+                        ? {
+                            role: "model",
+                            text: "Something went wrong. Try again later.",
+                        }
                         : msg
                 )
             );
         }
     };
-
 
     useEffect(() => {
         if (chatBodyRef.current) {
@@ -51,7 +56,17 @@ const App = () => {
     }, [chatHistory]);
 
     return (
-        <div className="container">
+        <div className={`container ${showChatbot ? "show-chatbot" : ""}`}>
+            <button
+                onClick={() => {
+                    setShowChatbot((prev) => !prev);
+                    console.log("Show chatbot toggled:", !showChatbot);
+                }}
+                id="chatbot-toggler"
+            >
+                <span className="material-symbols-rounded">mode_comment</span>
+                <span className="material-symbols-rounded">close</span>
+            </button>
             <div className="chatbot-popup">
                 <div className="chat-header">
                     <div className="header-info">
@@ -77,7 +92,10 @@ const App = () => {
                 </div>
 
                 <div className="chat-footer">
-                    <ChatForm setChatHistory={setChatHistory} generateBotResponse={generateBotResponse} />
+                    <ChatForm
+                        setChatHistory={setChatHistory}
+                        generateBotResponse={generateBotResponse}
+                    />
                 </div>
             </div>
         </div>
